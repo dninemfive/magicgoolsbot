@@ -13,12 +13,13 @@ var bot = new Discord.Client({
    token: auth.token,
    autorun: true
 });
-bot.on('ready', function (evt) {
-    logger.info('Connected');
-    logger.info('Logged in as: ');
-    logger.info(bot.username + '#' + bot.id);
+console.log(bot);
+bot.on('ready', function() {
+    console.log('Logged in as %s - %s\n', bot.username, bot.id);
 });
+console.log(bot);
 bot.on('message', function (user, userID, channelID, message, evt) {
+	bot.sendMessage({to: channelID, message: 'I live!'})
     if (message.substring(0, 1) == '!') {
         // var args = message.substring(1).split(' ');
         var cmd = args[0];
@@ -34,3 +35,4 @@ bot.on('message', function (user, userID, channelID, message, evt) {
          }
      }
 });
+console.log(bot);
