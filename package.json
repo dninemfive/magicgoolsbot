@@ -1,0 +1,11 @@
+{
+  "name": "magic goolsbot",
+  "version": "1.0.0",
+  "description": "memes",
+  "main": "austan.js",
+  "author": "dninemfive",
+  "dependencies": {
+    "discord.io": "^2.5.3",
+    "winston": "^3.3.3"
+  }
+}

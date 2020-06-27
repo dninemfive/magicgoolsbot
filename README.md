@@ -1,0 +1,2 @@
+# Magic Goolsbot
+Discord bot
