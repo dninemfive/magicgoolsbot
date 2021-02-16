@@ -1,38 +1,36 @@
-// Copied from here: https://www.digitaltrends.com/gaming/how-to-make-a-discord-bot/
-var Discord = require('discord.io');
-var logger = require('winston');
-var auth = require('./auth.json');
+const Discord = require('discord.js');
+const winston = require('winston');
+const dotenv = require('dotenv');
+
+// Load .env file
+dotenv.config();
+
+if (process.env.DISCORD_AUTH_TOKEN === undefined) {
+    throw "Error: DISCORD_AUTH_TOKEN environment variable is unset.";
+}
+
 // Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(new logger.transports.Console, {
-    colorize: true
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple(),
+    ),
+    transports: [
+        new winston.transports.Console()
+    ]
 });
-logger.level = 'debug';
+
 // Initialize Discord Bot
-var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
+const client = new Discord.Client();
+
+client.on('ready', () => {
+    logger.info(`Logged in as ${client.user.tag}!`);
 });
-console.log(bot);
-bot.on('ready', function() {
-    console.log('Logged in as %s - %s\n', bot.username, bot.id);
+
+client.on('message', msg => {
+    if (msg.content === 'ping') {
+        msg.reply('pong');
+    }
 });
-console.log(bot);
-bot.on('message', function (user, userID, channelID, message, evt) {
-	bot.sendMessage({to: channelID, message: 'I live!'})
-    if (message.substring(0, 1) == '!') {
-        // var args = message.substring(1).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        switch(cmd) {
-            case 'ping':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Pong!'
-                });
-            break;
-         }
-     }
-});
-console.log(bot);
+
+client.login(process.env.DISCORD_AUTH_TOKEN);
