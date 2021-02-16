@@ -47,7 +47,7 @@ client.on('message', msg => {
 
     // Check all commands to see if the message body contains given text
     for (const command of commands) {
-        if (msg.content.includes(command.bodyIncludes)) {
+        if (msg.content.toLowerCase().includes(command.bodyIncludes)) {
             // Pass message first, logger is optional
             command.callback(msg, { logger });
         }
