@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const winston = require('winston');
 const dotenv = require('dotenv');
+const path = require('path');
+const glob = require('glob');
 
 // Load .env file
 dotenv.config();
@@ -16,20 +18,39 @@ const logger = winston.createLogger({
         winston.format.simple(),
     ),
     transports: [
-        new winston.transports.Console()
+        new winston.transports.Console(),
     ]
 });
+
+// Load commands dynamically
+const commands = [];
+
+const commandFilenames = glob.sync("./commands/*.js");
+
+for (const filename of commandFilenames.map((f) => path.basename(f, ".js"))) {
+    commands.push(require("./commands/" + filename));
+}
 
 // Initialize Discord Bot
 const client = new Discord.Client();
 
 client.on('ready', () => {
     logger.info(`Logged in as ${client.user.tag}!`);
+    logger.info(`Registered commands: ${commandFilenames.map((f) => path.basename(f)).join(',')}.`)
 });
 
 client.on('message', msg => {
-    if (msg.content === 'ping') {
-        msg.reply('pong');
+    // Ignore bots
+    if (msg.author.bot) {
+        return;
+    }
+
+    // Check all commands to see if the message body contains given text
+    for (const command of commands) {
+        if (msg.content.includes(command.bodyIncludes)) {
+            // Pass message first, logger is optional
+            command.callback(msg, { logger });
+        }
     }
 });
 
