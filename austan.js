@@ -27,8 +27,8 @@ const commands = [];
 
 const commandFilenames = glob.sync("./commands/*.js");
 
-for (const filename of commandFilenames.map((f) => path.basename(f, ".js"))) {
-    commands.push(require("./commands/" + filename));
+for (const filename of commandFilenames) {
+    commands.push(require("./commands/" + path.basename(filename, ".js")));
 }
 
 // Initialize Discord Bot
@@ -49,7 +49,7 @@ client.on('message', msg => {
     for (const command of commands) {
         if (msg.content.toLowerCase().includes(command.bodyIncludes)) {
             // Pass message first, logger is optional
-            command.callback(msg, { logger });
+            command.callback({ msg, logger, client });
         }
     }
 });
